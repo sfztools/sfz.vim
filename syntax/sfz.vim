@@ -32,5 +32,5 @@ hi def link floatSFZ Type
 hi def link keySFZ Type
 hi def link headerSFZ Identifier
 hi def link optcodeSFZ Statement
-hi def link equalsSFZ Special
+hi def link equalsSFZ Delimiter
 hi def link macroSFZ PreProc
