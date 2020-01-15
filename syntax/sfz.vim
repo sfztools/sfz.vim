@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language: SFZ
 " Maintainer: J Isaac Stone
-" Latest Revision: 9 Jan 2020
+" Latest Revision: 15 Jan 2020
 if exists("b:current_syntax")
   finish
 endif
@@ -9,11 +9,25 @@ endif
 syn match lineCommentSFZ "//.*$"
 syn region blockCommentSFZ start="/\*" end="\*/" fold
 
-" Master and group regions fold until next region of same type, others fold
-" until next region of any type
-syn region masterReg matchgroup=headerSFZ start="<master>" end="<master>"me=s-1 fold contains=TOP
-syn region groupReg matchgroup=headerSFZ start="<group>" end="<group>"me=s-1 fold contains=TOP
-syn region headerReg matchgroup=headerSFZ start="<\(region\|control\|global\|curve\|effect\|midi\)>" end="<[a-z]\+>"me=s-1 fold contains=TOP
+" most sfz files contain only one <control> header if any
+" so folding to next header makes more sense than folding to EOF
+syn region controlReg matchgroup=headerSFZ fold contains=TOP
+    \ start="<control>"
+    \ end="<[a-z]\+>"me=s-1
+" could argue the same is true of <global>
+" wonder if there is a way to have vim count the # of matches
+syn region globalReg matchgroup=headerSFZ fold contains=TOP
+    \ start="<global>"
+    \ end="<global>"me=s-1 end="<control>"me=s-1
+syn region masterReg matchgroup=headerSFZ fold contains=TOP
+    \ start="<master>"
+    \ end="<global>"me=s-1 end="<control>"me=s-1 end="<master>"me=s-1
+syn region groupReg matchgroup=headerSFZ fold contains=TOP
+    \ start="<group>"
+    \ end="<global>"me=s-1 end="<control>"me=s-1 end="<master>"me=s-1 end="<group>"me=s-1
+syn region headerReg matchgroup=headerSFZ fold contains=TOP
+    \ start="<region>" start="<curve>" start="<effect>" start="<midi>"
+    \ end="<[a-z]\+>"me=s-1
 
 " Numbers are colored, strings and file paths are not.
 syn match integerSFZ "\d\+" contained display
